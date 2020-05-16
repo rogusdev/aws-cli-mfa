@@ -1,0 +1,16 @@
+# you MUST source this file to get the exports in your shell!
+
+RESPONSE=$(./aws-cli-mfa.py $@)
+
+echo $(echo $RESPONSE | jq -r .sts_cmd)
+echo $(echo $RESPONSE | jq -r .output)
+
+# https://stackoverflow.com/questions/34529156/iterate-through-dictionaries-jq-shell
+# https://www.cyberciti.biz/faq/bash-for-loop-array/
+KEYS=( $(echo $RESPONSE | jq -r '.envvars | keys[]') )
+
+for key in "${KEYS[@]}" ; do
+    value=$(echo $RESPONSE | jq -r ".envvars.$key")
+    export $key=$value
+    echo "Set env var: $key"
+done

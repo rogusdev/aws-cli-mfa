@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-# Follow the directions from AWS on using MFA with CLI:
+# Follows the directions from AWS on using MFA with CLI:
 #  https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/
 
 # That means: call STS with an ARN and an MFA token,
 #  with the response, populate an MFA section in aws creds file
-#  and, by default, use that profile after you run this
-
-# sudo cp ./aws-cli-mfa.py /usr/bin/aws-cli-mfa && sudo chmod +x /usr/bin/aws-cli-mfa
 
 
 import os
@@ -56,43 +53,64 @@ def gen_sts_cmd(cli_args):
     return f"aws sts get-session-token {' '.join(sts_args)}"
 
 
-def write_config(cli_args, sts_json):
+def write_config(creds_file, mfa_profile_section, creds):
     config = configparser.ConfigParser()
-    config.read(cli_args.aws_creds_file)
+    config.read(creds_file)
 
-    config[cli_args.aws_creds_mfa_section] = {
-        'aws_access_key_id': sts_json["Credentials"]["AccessKeyId"],
-        'aws_secret_access_key': sts_json["Credentials"]["SecretAccessKey"],
-        'aws_session_token': sts_json["Credentials"]["SessionToken"],
-    }
+    config[mfa_profile_section] = creds
 
-    with open(cli_args.aws_creds_file, 'w') as configfile:
+    with open(creds_file, 'w') as configfile:
        config.write(configfile)
 
 
-def write_env_vars(sts_json):
-    os.environ['AWS_ACCESS_KEY_ID'] = sts_json["Credentials"]["AccessKeyId"]
-    os.environ['AWS_SECRET_ACCESS_KEY'] = sts_json["Credentials"]["SecretAccessKey"]
-    os.environ['AWS_SESSION_TOKEN'] = sts_json["Credentials"]["SessionToken"]
+def apply_sts_json(
+        sts_json,
+        use_env_vars,
+        creds_file,
+        mfa_profile_section,
+        export_profile
+    ):
 
+    envvars = {}
+    creds = {
+        'AWS_ACCESS_KEY_ID': sts_json["Credentials"]["AccessKeyId"],
+        'AWS_SECRET_ACCESS_KEY': sts_json["Credentials"]["SecretAccessKey"],
+        'AWS_SESSION_TOKEN': sts_json["Credentials"]["SessionToken"],
+    }
 
-def set_aws_profile(cli_args):
-    os.environ['AWS_PROFILE'] = cli_args.aws_creds_mfa_section
+    if use_env_vars:
+        envvars = creds.copy()
+    else:
+        write_config(creds_file, mfa_profile_section, creds)
+
+    if export_profile:
+        envvars['AWS_PROFILE'] = mfa_profile_section
+
+    return envvars
 
 
 if __name__ == '__main__':
+    response = {}
+
     cli_args = parse_cli_args()
     sts_cmd = gen_sts_cmd(cli_args)
-    print(sts_cmd)
+    response['sts_cmd'] = sts_cmd
+
     sts_output = os.popen(sts_cmd).read()
-    sts_json = json.loads(sts_output)
+    try:
+        sts_json = json.loads(sts_output)
 
-    if cli_args.aws_env_vars:
-        write_env_vars(cli_args, sts_json)
-    else:
-        write_config(cli_args, sts_json)
+        try:
+            response['envvars'] = apply_sts_json(
+                sts_json,
+                cli_args.aws_env_vars,
+                cli_args.aws_creds_file,
+                cli_args.aws_creds_mfa_section,
+                not cli_args.no_export_profile
+            )
+        except Exception as ex:
+            response['output'] = str(ex)
+    except:
+        response['output'] = sts_output
 
-    if not cli_args.no_export_profile:
-        set_aws_profile(cli_args)
-
-    print(f'Updated AWS MFA creds')
+    print(json.dumps(response))
