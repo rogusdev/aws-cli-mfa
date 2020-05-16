@@ -11,7 +11,7 @@ I recommend you have your AWS_MFA_ARN in your `.bashrc` or as appropriate:
 
     echo 'export AWS_MFA_ARN=arn:aws:iam::NUMBER:mfa/USERNAME' >> $HOME/.bash_profile
 
-Replacing the number and username as appropriate. Your MFA ARN is on this page:
+Replacing the number and username as appropriate. Your MFA ARN is on this page:\
 https://console.aws.amazon.com/iam/home?#/security_credentials
 
 ## Alternatives
