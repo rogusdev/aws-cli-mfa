@@ -83,13 +83,13 @@ def apply_sts_json(
     else:
         write_config(creds_file, mfa_profile_section, creds)
 
-    if export_profile:
-        envvars['AWS_PROFILE'] = mfa_profile_section
+        if export_profile:
+            envvars['AWS_PROFILE'] = mfa_profile_section
 
     return envvars
 
 
-if __name__ == '__main__':
+def build_response():
     response = {}
 
     cli_args = parse_cli_args()
@@ -113,4 +113,7 @@ if __name__ == '__main__':
     except:
         response['output'] = sts_output
 
-    print(json.dumps(response))
+    return response
+
+if __name__ == '__main__':
+    print(json.dumps(build_response()))

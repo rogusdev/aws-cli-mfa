@@ -1,5 +1,5 @@
 # aws-cli-mfa
-Python script to streamline official AWS process for using MFA with the AWS CLI
+Python+bash script to streamline official AWS process for using MFA with the AWS CLI
 
 Matches to: https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/
 
@@ -16,7 +16,11 @@ https://console.aws.amazon.com/iam/home?#/security_credentials
 
 ## Installation
 
-    sed -e "/INSERT_PYTHON_CODE_HERE/r ./aws-cli-mfa.py" -e "s///" ./aws-cli-mfa.bash | sudo tee /usr/local/bin/aws-cli-mfa > /dev/null && chmod +x /usr/local/bin/aws-cli-mfa
+    sed -e "/INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./aws-cli-mfa.bash | sudo tee /usr/local/bin/aws-cli-mfa > /dev/null && chmod +x /usr/local/bin/aws-cli-mfa
+
+## Testing
+
+    python3 -m unittest tests.aws_cli_mfa_tests
 
 ## Alternatives
 There are other options that take slightly different views on how to do this:\
