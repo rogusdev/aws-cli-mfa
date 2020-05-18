@@ -1,5 +1,5 @@
 # aws-cli-mfa
-Python+bash script to streamline official AWS process for using MFA with the AWS CLI
+Python + bash script to streamline official AWS process for using MFA with the AWS CLI
 
 Matches to: https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/
 
@@ -9,6 +9,10 @@ Note that you MUST `source` (or its synonym `.`) to change env vars in your curr
     . aws-cli-mfa $AWS_MFA_ARN 123456
     . aws-cli-mfa $AWS_MFA_ARN 123456 -p rogusdev -d 57600
 
+You must have python 3 (as `python3`) and the aws cli (as `aws`) available on your PATH in your shell.
+
+You will pass, at a minimum, your AWS MFA ARN and the current MFA auth token from your 2fa/mfa authenticator app/device. This does not work with yubikeys/etc (per AWS docs). There are additional optional args to change the effects this script has on your system.
+
 I recommend you have your AWS_MFA_ARN in your `.bash_profile` or as appropriate for your shell:
 
     echo 'export AWS_MFA_ARN=arn:aws:iam::NUMBER:mfa/USERNAME' >> $HOME/.bash_profile
@@ -16,7 +20,7 @@ I recommend you have your AWS_MFA_ARN in your `.bash_profile` or as appropriate 
 Replacing the number and username as appropriate. Your MFA ARN is on this page:\
 https://console.aws.amazon.com/iam/home?#/security_credentials
 
-To see all the options, run it with `-h`:
+To see all the options, run the script with `-h`:
 
     aws-cli-mfa -h
 
