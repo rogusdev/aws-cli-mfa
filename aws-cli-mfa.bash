@@ -6,7 +6,12 @@ INSERT_PYTHON_CODE_HERE
 EOF
 )
 
-RESPONSE=$(/usr/bin/env python3 -c "$PYCODE" $@)
+RESPONSE=$(COLUMNS=999 /usr/bin/env python3 -c "$PYCODE" $@)
+
+if [[ $RESPONSE == usage* ]] ; then
+    echo "$RESPONSE"
+    exit
+fi
 
 
 STS_CMD=$(echo $RESPONSE | jq -r .sts_cmd)
