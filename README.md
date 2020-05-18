@@ -16,7 +16,12 @@ https://console.aws.amazon.com/iam/home?#/security_credentials
 
 ## Installation
 
-    sed -e "/INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./aws-cli-mfa.bash | sudo tee /usr/local/bin/aws-cli-mfa > /dev/null && chmod +x /usr/local/bin/aws-cli-mfa
+    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/master/aws-cli-mfa && sudo mv aws-cli-mfa /usr/local/bin/ && chmod +x /usr/local/bin/aws-cli-mfa
+
+## Building from src
+Clone the repo and create the final `aws-cli-mfa` script like so:
+
+    sed -e "/INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./aws-cli-mfa.bash | sudo tee /usr/local/bin/aws-cli-mfa > /dev/null && chmod +x /usr/local/bin/aws-cli-mfa && cp /usr/local/bin/aws-cli-mfa ./
 
 ## Testing
 

@@ -33,6 +33,25 @@ class TestAwsCliMfa(unittest.TestCase):
         return cli_args
 
     @staticmethod
+    def _mock_cli_args_full(
+        aws_env_vars = True,
+        no_export_profile = True
+    ):
+        cli_args = TestAwsCliMfa._mock_cli_args(
+            profile_arn = 'ARN',
+            mfa_token = 'MFA',
+            aws_profile = 'pro',
+            lifetime_duration = '1234'
+        )
+
+        cli_args.aws_env_vars = aws_env_vars
+        cli_args.aws_creds_file = "/path/to/creds"
+        cli_args.aws_creds_mfa_section = "mfa"
+        cli_args.no_export_profile = no_export_profile
+
+        return cli_args
+
+    @staticmethod
     def _sts_json():
         return {
             "Credentials": {
@@ -41,6 +60,7 @@ class TestAwsCliMfa(unittest.TestCase):
                 "SessionToken": "zzz",
             }
         }
+
 
     def test_gen_sts_cmd_min(self):
         cli_args = self._mock_cli_args(
@@ -133,6 +153,15 @@ class TestAwsCliMfa(unittest.TestCase):
             "mfa",
             True
         )
+        write_config.assert_called_once_with(
+            "/path/to/creds",
+            "mfa",
+            {
+                'AWS_ACCESS_KEY_ID': 'xxx',
+                'AWS_SECRET_ACCESS_KEY': 'yyy',
+                'AWS_SESSION_TOKEN': 'zzz',
+            }
+        )
         self.assertEqual(
             {
                 "AWS_PROFILE": "mfa",
@@ -149,30 +178,27 @@ class TestAwsCliMfa(unittest.TestCase):
             "mfa",
             False
         )
+        write_config.assert_called_once_with(
+            "/path/to/creds",
+            "mfa",
+            {
+                'AWS_ACCESS_KEY_ID': 'xxx',
+                'AWS_SECRET_ACCESS_KEY': 'yyy',
+                'AWS_SESSION_TOKEN': 'zzz',
+            }
+        )
         self.assertEqual(
             {
             },
             envvars
         )
 
+
     @patch('os.popen')
     @patch('src.aws_cli_mfa.parse_cli_args')
     def test_build_response(self, parse_cli_args, os_popen):
         self.maxDiff = None
-
-        cli_args = self._mock_cli_args(
-            profile_arn = 'ARN',
-            mfa_token = 'MFA',
-            aws_profile = 'pro',
-            lifetime_duration = '1234'
-        )
-
-        cli_args.aws_env_vars = True
-        cli_args.aws_creds_file = "/path/to/creds"
-        cli_args.aws_creds_mfa_section = "mfa"
-        cli_args.no_export_profile = False
-
-        parse_cli_args.return_value = cli_args
+        parse_cli_args.return_value = self._mock_cli_args_full()
 
         os_popen.return_value.read.return_value = json.dumps(self._sts_json())
 
@@ -185,6 +211,48 @@ class TestAwsCliMfa(unittest.TestCase):
                     "AWS_SECRET_ACCESS_KEY": "yyy",
                     "AWS_SESSION_TOKEN": "zzz",
                 }
+            },
+            response
+        )
+
+    @patch('os.popen')
+    @patch('src.aws_cli_mfa.parse_cli_args')
+    def test_build_response_bad_json(self, parse_cli_args, os_popen):
+        self.maxDiff = None
+        parse_cli_args.return_value = self._mock_cli_args_full()
+
+        os_popen.return_value.read.return_value = 'NOT JSON AT ALL -- BAD DATA!'
+
+        response = build_response()
+        self.assertEqual(
+            {
+                'sts_cmd': "aws sts get-session-token --profile pro --serial-number ARN --token-code MFA --duration-seconds 1234",
+                'output': 'NOT JSON AT ALL -- BAD DATA!'
+            },
+            response
+        )
+
+    @patch('src.aws_cli_mfa.write_config')
+    @patch('os.popen')
+    @patch('src.aws_cli_mfa.parse_cli_args')
+    def test_build_response_bad_write(self, parse_cli_args, os_popen, write_config):
+        self.maxDiff = None
+
+        cli_args = self._mock_cli_args_full(
+            aws_env_vars = False,
+            no_export_profile = False
+        )
+        parse_cli_args.return_value = cli_args
+
+        os_popen.return_value.read.return_value = json.dumps(self._sts_json())
+
+        write_config.side_effect = IOError('Failed to write file')
+
+        response = build_response()
+        self.assertEqual(
+            {
+                'sts_cmd': "aws sts get-session-token --profile pro --serial-number ARN --token-code MFA --duration-seconds 1234",
+                'output': 'Failed to write file'
             },
             response
         )

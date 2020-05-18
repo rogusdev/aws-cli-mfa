@@ -13,7 +13,7 @@ STS_CMD=$(echo $RESPONSE | jq -r .sts_cmd)
 OUTPUT=$(echo $RESPONSE | jq -r .output)
 
 [[ ! -z "$STS_CMD" ]] && echo $STS_CMD
-[[ ! -z "$OUTPUT" ]] && echo $OUTPUT
+[[ ! -z "$OUTPUT" && "null" != "$OUTPUT" ]] && echo $OUTPUT
 
 
 KEYS=( $(echo $RESPONSE | jq -r '.envvars | keys[]') )
