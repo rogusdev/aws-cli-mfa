@@ -34,10 +34,3 @@ Clone the repo and create the final `aws-cli-mfa` script like so:
 
 ## Testing
     python3 -m unittest tests.aws_cli_mfa_tests
-
-## Alternatives
-There are other options that take slightly different views on how to do this:\
-https://github.com/broamski/aws-mfa \
-https://github.com/dcoker/awsmfa
-
-They are not quite aligned with the official AWS recommendations, at least not by default.
