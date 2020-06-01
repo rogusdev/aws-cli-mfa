@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 def parse_cli_args():
-    argparser = argparse.ArgumentParser(prog='aws-cli-mfa', description='Process some integers.')
+    argparser = argparse.ArgumentParser(prog='aws-cli-mfa', description='Login to AWS CLI using MFA token with STS')
 
     argparser.add_argument('profile_arn', metavar='profile-arn',
         help='the AWS ARN for your MFA profile')
