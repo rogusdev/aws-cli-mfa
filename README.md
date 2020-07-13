@@ -27,6 +27,10 @@ To see all the options, run the script with `-h`:
 ## Installation
     wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/master/aws-cli-mfa && \
       sudo mv aws-cli-mfa /usr/local/bin/ && sudo chmod +x /usr/local/bin/aws-cli-mfa
+      
+for macOS, you also need to do
+      
+    brew install jq wget
 
 ## Building from src
 Clone the repo and create the final `aws-cli-mfa` script like so:
