@@ -38,7 +38,7 @@ Installing `jq` and `wget` (in case you don't have wget to download this script 
 
 Installing `aws`: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
 
-Installing python 3 can be done in a variet of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
+Installing `python3` can be done in a variet of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
 
 ## Building from src
 Clone the repo and create the final `aws-cli-mfa` script like so:
