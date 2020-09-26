@@ -46,6 +46,12 @@ function test {
 
 BASH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/bash.sh)
 
+test bash "${BASH_SCRIPT/python3 /python1 }" source python3 "python3 could not be found!"
+test bash "${BASH_SCRIPT/python3 /python1 }" direct python3 "python3 could not be found!"
+test bash "${BASH_SCRIPT/aws /aws1 }" source aws "aws could not be found!"
+test bash "${BASH_SCRIPT/aws /aws1 }" direct aws "aws could not be found!"
+test bash "${BASH_SCRIPT/jq /jq1 }" source jq "jq could not be found!"
+test bash "${BASH_SCRIPT/jq /jq1 }" direct jq "jq could not be found!"
 test bash "$BASH_SCRIPT" source usage "usage instructions"
 test bash "$BASH_SCRIPT" direct usage "usage instructions"
 test bash "$BASH_SCRIPT" source notjson "JSON parsing failed:
@@ -77,6 +83,12 @@ TEST_AWS_CLI_MFA_1=val1"
 
 ZSH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/zsh.sh)
 
+test zsh "${ZSH_SCRIPT/python3 /python1 }" source python3 "python3 could not be found!"
+test zsh "${ZSH_SCRIPT/python3 /python1 }" direct python3 "python3 could not be found!"
+test zsh "${ZSH_SCRIPT/aws /aws1 }" source aws "aws could not be found!"
+test zsh "${ZSH_SCRIPT/aws /aws1 }" direct aws "aws could not be found!"
+test zsh "${ZSH_SCRIPT/jq /jq1 }" source jq "jq could not be found!"
+test zsh "${ZSH_SCRIPT/jq /jq1 }" direct jq "jq could not be found!"
 test zsh "$ZSH_SCRIPT" source usage "usage instructions"
 test zsh "$ZSH_SCRIPT" direct usage "usage instructions"
 test zsh "$ZSH_SCRIPT" source notjson "JSON parsing failed:
@@ -108,6 +120,12 @@ TEST_AWS_CLI_MFA_2=val2"
 
 KSH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/ksh.sh)
 
+test ksh "${KSH_SCRIPT/python3 /python1 }" source python3 "python3 could not be found!"
+test ksh "${KSH_SCRIPT/python3 /python1 }" direct python3 "python3 could not be found!"
+test ksh "${KSH_SCRIPT/aws /aws1 }" source aws "aws could not be found!"
+test ksh "${KSH_SCRIPT/aws /aws1 }" direct aws "aws could not be found!"
+test ksh "${KSH_SCRIPT/jq /jq1 }" source jq "jq could not be found!"
+test ksh "${KSH_SCRIPT/jq /jq1 }" direct jq "jq could not be found!"
 test ksh "$KSH_SCRIPT" source usage "usage instructions"
 test ksh "$KSH_SCRIPT" direct usage "usage instructions"
 test ksh "$KSH_SCRIPT" source notjson "JSON parsing failed:

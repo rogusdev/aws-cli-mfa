@@ -18,11 +18,8 @@ options = {
 # print(test)
 
 if len(sys.argv) > 1:
-    output = options.get(sys.argv[1])
-    if output:
-        print(output)
-    else:
-        print("FAILED: invalid arg given")
+    output = options.get(sys.argv[1], "FAILED: invalid arg given")
+    print(output)
 else:
     print("FAILED: no arg given")
     exit(1)
