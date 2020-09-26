@@ -1,5 +1,5 @@
 # aws-cli-mfa
-Python + bash script to streamline official AWS process for using MFA with the AWS CLI
+Python + shell script to streamline official AWS process for using MFA with the AWS CLI
 
 Matches to: https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/
 
@@ -25,7 +25,8 @@ To see all the options, run the script with `-h`:
     aws-cli-mfa -h
 
 ## Installation
-    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/main/bin/aws-cli-mfa.bash -o aws-cli-mfa &&
+    AWS_CLI_MFA_SHELL=bash &&
+    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/main/bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL -O aws-cli-mfa &&
       sudo mv aws-cli-mfa /usr/local/bin/ && sudo chmod +x /usr/local/bin/aws-cli-mfa
 
 You might also need to install dependencies as well:
@@ -41,13 +42,10 @@ Installing `aws`: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2
 Installing `python3` can be done in a variet of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
 
 ## Building from src
-Clone the repo and create the final `aws-cli-mfa` script for your specific shell like so:
+Clone the repo and create all shells' final `aws-cli-mfa-*` scripts and then copy your preference like so:
 
-    AWS_CLI_MFA_SHELL=bash && \
-    sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
-      sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
-      sudo chmod +x /usr/local/bin/aws-cli-mfa &&
-      cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
+    AWS_CLI_MFA_SHELL=bash &&
+    ./build.sh && sudo cp ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL /usr/local/bin/aws-cli-mfa
 
 Current shell options are: `bash`, `zsh`, `ksh`
 
