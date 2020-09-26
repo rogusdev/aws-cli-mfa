@@ -25,7 +25,7 @@ To see all the options, run the script with `-h`:
     aws-cli-mfa -h
 
 ## Installation
-    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/master/bin/aws-cli-mfa.bash -o aws-cli-mfa &&
+    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/main/bin/aws-cli-mfa.bash -o aws-cli-mfa &&
       sudo mv aws-cli-mfa /usr/local/bin/ && sudo chmod +x /usr/local/bin/aws-cli-mfa
 
 You might also need to install dependencies as well:
