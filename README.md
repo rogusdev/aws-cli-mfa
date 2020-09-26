@@ -41,15 +41,17 @@ Installing `aws`: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2
 Installing `python3` can be done in a variet of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
 
 ## Building from src
-Clone the repo and create the final `aws-cli-mfa` script like so:
+Clone the repo and create the final `aws-cli-mfa` script for your specific shell like so:
 
     AWS_CLI_MFA_SHELL=bash && \
     sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
       sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
       sudo chmod +x /usr/local/bin/aws-cli-mfa &&
-      cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa.$AWS_CLI_MFA_SHELL
+      cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
 
-For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.
+Current shell options are: `bash`, `zsh`
+
+(For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.)
 
 ## Testing
 

@@ -2,10 +2,16 @@
 
 BASE_DIR=$(dirname "${BASH_SOURCE[0]}")
 
+# helpful test debugging lines:
+#  PYCODE=$(cat tests/test_sh.py) && COLUMNS=999 /usr/bin/env python3 -c "$PYCODE" output
+#  PYCODE=$(cat tests/test_sh.py) && RESPONSE=$(COLUMNS=999 /usr/bin/env python3 -c "$PYCODE" output) && echo "$RESPONSE"
+#  BASE_DIR=./tests && sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/zsh.sh > aws-cli-mfa-test && chmod +x aws-cli-mfa-test
+
+
 function test {
     TEST_SHELL=$1
-    TEST_MODE=$2
-    TEST_SCRIPT=$3
+    TEST_SCRIPT=$2
+    TEST_MODE=$3
     TEST_ARG=$4
     TEST_EXPECTED=$5
 
@@ -15,25 +21,17 @@ function test {
     tmpfile=$(mktemp)
     echo "$TEST_SCRIPT" >"$tmpfile"
 
-    case $TEST_MODE in
-        "source")
-            TEST_OUT=$($TEST_SHELL -c "source $tmpfile $TEST_ARG")
-            ;;
-
-        "direct")
-            chmod +x "$tmpfile"
-            TEST_OUT=$($TEST_SHELL -c "$tmpfile $TEST_ARG")
-            ;;
-
-        "envgrep")
-            TEST_OUT=$($TEST_SHELL -c "source $tmpfile $TEST_ARG && env | grep TEST_AWS_CLI_MFA")
-            ;;
-
-        *)
-            echo "BAD TEST ARG!"
-            return
-            ;;
-    esac
+    if [ "$TEST_MODE" = "source" ]; then
+        TEST_OUT=$($TEST_SHELL -c "source $tmpfile $TEST_ARG")
+    elif [ "$TEST_MODE" = "direct" ]; then
+        chmod +x "$tmpfile"
+        TEST_OUT=$($TEST_SHELL -c "$tmpfile $TEST_ARG")
+    elif [ "$TEST_MODE" = "envgrep" ]; then
+        TEST_OUT=$($TEST_SHELL -c "source $tmpfile $TEST_ARG && env | grep TEST_AWS_CLI_MFA")
+    else
+        echo "BAD TEST ARG!"
+        return
+    fi
 
     rm "$tmpfile"
 
@@ -48,34 +46,62 @@ function test {
 
 BASH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/bash.sh)
 
-test bash source "$BASH_SCRIPT" usage "usage instructions"
-test bash direct "$BASH_SCRIPT" usage "usage instructions"
-test bash source "$BASH_SCRIPT" notjson "JSON parsing failed:
+test bash "$BASH_SCRIPT" source usage "usage instructions"
+test bash "$BASH_SCRIPT" direct usage "usage instructions"
+test bash "$BASH_SCRIPT" source notjson "JSON parsing failed:
 not json"
-test bash direct "$BASH_SCRIPT" notjson "JSON parsing failed:
+test bash "$BASH_SCRIPT" direct notjson "JSON parsing failed:
 not json"
-test bash source "$BASH_SCRIPT" sts "aws sts something something"
-test bash direct "$BASH_SCRIPT" sts "aws sts something something"
-test bash source "$BASH_SCRIPT" output "aws sts something something
+test bash "$BASH_SCRIPT" source sts "aws sts something something"
+test bash "$BASH_SCRIPT" direct sts "aws sts something something"
+test bash "$BASH_SCRIPT" source output "aws sts something something
 output across
 multiple lines"
-test bash direct "$BASH_SCRIPT" output "aws sts something something
+test bash "$BASH_SCRIPT" direct output "aws sts something something
 output across
 multiple lines"
-test bash source "$BASH_SCRIPT" envvars "sts
+test bash "$BASH_SCRIPT" source envvars "sts
 output
 Set env var: TEST_AWS_CLI_MFA_1
 Set env var: TEST_AWS_CLI_MFA_2"
-test bash direct "$BASH_SCRIPT" envvars "sts
+test bash "$BASH_SCRIPT" direct envvars "sts
 output
 You must source this file to get the exports in your shell"
-test bash envgrep "$BASH_SCRIPT" envvars "sts
+test bash "$BASH_SCRIPT" envgrep envvars "sts
 output
 Set env var: TEST_AWS_CLI_MFA_1
 Set env var: TEST_AWS_CLI_MFA_2
 TEST_AWS_CLI_MFA_2=val2
 TEST_AWS_CLI_MFA_1=val1"
 
-# TODO: all of the above, but with zsh
+ZSH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/zsh.sh)
 
-# TODO, someday: all of the above, but with fish
+test zsh "$ZSH_SCRIPT" source usage "usage instructions"
+test zsh "$ZSH_SCRIPT" direct usage "usage instructions"
+test zsh "$ZSH_SCRIPT" source notjson "JSON parsing failed:
+not json"
+test zsh "$ZSH_SCRIPT" direct notjson "JSON parsing failed:
+not json"
+test zsh "$ZSH_SCRIPT" source sts "aws sts something something"
+test zsh "$ZSH_SCRIPT" direct sts "aws sts something something"
+test zsh "$ZSH_SCRIPT" source output "aws sts something something
+output across
+multiple lines"
+test zsh "$ZSH_SCRIPT" direct output "aws sts something something
+output across
+multiple lines"
+test zsh "$ZSH_SCRIPT" source envvars "sts
+output
+Set env var: TEST_AWS_CLI_MFA_1
+Set env var: TEST_AWS_CLI_MFA_2"
+test zsh "$ZSH_SCRIPT" direct envvars "sts
+output
+You must source this file to get the exports in your shell"
+test zsh "$ZSH_SCRIPT" envgrep envvars "sts
+output
+Set env var: TEST_AWS_CLI_MFA_1
+Set env var: TEST_AWS_CLI_MFA_2
+TEST_AWS_CLI_MFA_1=val1
+TEST_AWS_CLI_MFA_2=val2"
+
+# TODO, someday: all of the above, but with ksh, csh, tcsh, fish

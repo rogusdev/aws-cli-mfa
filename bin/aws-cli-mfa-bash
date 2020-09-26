@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # you MUST source this file to get the exports in your shell!
 
 
@@ -136,36 +138,36 @@ RESPONSE=$(COLUMNS=999 /usr/bin/env python3 -c "$PYCODE" $@)
     SOURCED=1 || SOURCED=0
 
 
-if [[ $RESPONSE == usage* ]] ; then
-    echo "$RESPONSE"
+if [[ "$RESPONSE" == usage* ]] ; then
+    echo -E "$RESPONSE"
     [[ $SOURCED -eq 1 ]] && return 0 || exit 0
 fi
 
-if ! echo $RESPONSE | jq -e . >/dev/null 2>&1; then
+if ! echo -E "$RESPONSE" | jq -e . >/dev/null 2>&1; then
     echo "JSON parsing failed:"
-    echo "$RESPONSE"
+    echo -E "$RESPONSE"
     [[ $SOURCED -eq 1 ]] && return 1 || exit 1
 fi
 
-STS_CMD=$(echo $RESPONSE | jq -r .sts_cmd)
-OUTPUT=$(echo $RESPONSE | jq -r .output)
+STS_CMD=$(echo -E "$RESPONSE" | jq -r .sts_cmd)
+OUTPUT=$(echo -E "$RESPONSE" | jq -r .output)
 
 [[ ! -z "$STS_CMD" ]] && echo "$STS_CMD"
 [[ ! -z "$OUTPUT" && "null" != "$OUTPUT" ]] && echo "$OUTPUT"
 
 
 # https://unix.stackexchange.com/questions/88850/precedence-of-the-shell-logical-operators
-[[ "null" == "$(echo $RESPONSE | jq -r '.envvars')" ]] &&
+[[ "null" == "$(echo -E "$RESPONSE" | jq -r '.envvars')" ]] &&
     { [[ $SOURCED -eq 1 ]] && return 0 || exit 0; }
 
-KEYS=( $(echo $RESPONSE | jq -r '.envvars | keys[]') )
+KEYS=( $(echo -E "$RESPONSE" | jq -r '.envvars | keys[]') )
 
 [[ ${#KEYS[@]} -ge 0 ]] && [[ $SOURCED -ne 1 ]] &&
     echo "You must source this file to get the exports in your shell" &&
     exit 1
 
 for key in "${KEYS[@]}" ; do
-    value=$(echo $RESPONSE | jq -r ".envvars.$key")
+    value=$(echo -E "$RESPONSE" | jq -r ".envvars.$key")
     export $key=$value
     echo "Set env var: $key"
 done
