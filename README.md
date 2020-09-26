@@ -49,7 +49,7 @@ Clone the repo and create the final `aws-cli-mfa` script for your specific shell
       sudo chmod +x /usr/local/bin/aws-cli-mfa &&
       cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
 
-Current shell options are: `bash`, `zsh`
+Current shell options are: `bash`, `zsh`, `ksh`
 
 (For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.)
 

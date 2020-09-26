@@ -74,6 +74,7 @@ Set env var: TEST_AWS_CLI_MFA_2
 TEST_AWS_CLI_MFA_2=val2
 TEST_AWS_CLI_MFA_1=val1"
 
+
 ZSH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/zsh.sh)
 
 test zsh "$ZSH_SCRIPT" source usage "usage instructions"
@@ -104,4 +105,36 @@ Set env var: TEST_AWS_CLI_MFA_2
 TEST_AWS_CLI_MFA_1=val1
 TEST_AWS_CLI_MFA_2=val2"
 
-# TODO, someday: all of the above, but with ksh, csh, tcsh, fish
+
+KSH_SCRIPT=$(sed -e "/#INSERT_PYTHON_CODE_HERE/r $BASE_DIR/test_sh.py" -e "s///" $BASE_DIR/../src/ksh.sh)
+
+test ksh "$KSH_SCRIPT" source usage "usage instructions"
+test ksh "$KSH_SCRIPT" direct usage "usage instructions"
+test ksh "$KSH_SCRIPT" source notjson "JSON parsing failed:
+not json"
+test ksh "$KSH_SCRIPT" direct notjson "JSON parsing failed:
+not json"
+test ksh "$KSH_SCRIPT" source sts "aws sts something something"
+test ksh "$KSH_SCRIPT" direct sts "aws sts something something"
+test ksh "$KSH_SCRIPT" source output "aws sts something something
+output across
+multiple lines"
+test ksh "$KSH_SCRIPT" direct output "aws sts something something
+output across
+multiple lines"
+test ksh "$KSH_SCRIPT" source envvars "sts
+output
+Set env var: TEST_AWS_CLI_MFA_1
+Set env var: TEST_AWS_CLI_MFA_2"
+test ksh "$KSH_SCRIPT" direct envvars "sts
+output
+You must source this file to get the exports in your shell"
+test ksh "$KSH_SCRIPT" envgrep envvars "sts
+output
+Set env var: TEST_AWS_CLI_MFA_1
+Set env var: TEST_AWS_CLI_MFA_2
+TEST_AWS_CLI_MFA_1=val1
+TEST_AWS_CLI_MFA_2=val2"
+
+
+# TODO, someday: all of the above, but with csh, tcsh, fish
