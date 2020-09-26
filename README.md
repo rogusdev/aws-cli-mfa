@@ -25,7 +25,7 @@ To see all the options, run the script with `-h`:
     aws-cli-mfa -h
 
 ## Installation
-    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/master/aws-cli-mfa && \
+    wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/master/bin/aws-cli-mfa.bash -o aws-cli-mfa &&
       sudo mv aws-cli-mfa /usr/local/bin/ && sudo chmod +x /usr/local/bin/aws-cli-mfa
 
 You might also need to install dependencies as well:
@@ -43,10 +43,20 @@ Installing `python3` can be done in a variet of ways, however I recommend using 
 ## Building from src
 Clone the repo and create the final `aws-cli-mfa` script like so:
 
-    sed -e "/INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./aws-cli-mfa.bash | \
-      sudo tee /usr/local/bin/aws-cli-mfa > /dev/null && \
-      sudo chmod +x /usr/local/bin/aws-cli-mfa && \
-      cp /usr/local/bin/aws-cli-mfa ./
+    AWS_CLI_MFA_SHELL=bash && \
+    sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
+      sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
+      sudo chmod +x /usr/local/bin/aws-cli-mfa &&
+      cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa.$AWS_CLI_MFA_SHELL
+
+For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.
 
 ## Testing
+
+Tests for the core python functionality to call the aws cli with the right args and parse the results:
+
     python3 -m unittest tests.aws_cli_mfa_tests
+
+Tests for the shell scripts that wrap around the python script to set env vars when sourced:
+
+    ./tests/tests.sh
