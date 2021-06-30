@@ -25,6 +25,8 @@ To see all the options, run the script with `-h`:
     aws-cli-mfa -h
 
 ## Installation
+Use the correct shell for where you are going to use this:
+
     AWS_CLI_MFA_SHELL=bash &&
     wget https://raw.githubusercontent.com/rogusdev/aws-cli-mfa/main/bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL -O aws-cli-mfa &&
       sudo mv aws-cli-mfa /usr/local/bin/ && sudo chmod +x /usr/local/bin/aws-cli-mfa
@@ -52,7 +54,6 @@ Current shell options are: `bash`, `zsh`, `ksh`
 (For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.)
 
 ## Testing
-
 Tests for the core python functionality to call the aws cli with the right args and parse the results:
 
     python3 -m unittest tests.aws_cli_mfa_tests
