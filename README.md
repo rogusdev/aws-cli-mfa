@@ -20,6 +20,10 @@ I recommend you have your AWS_MFA_ARN in your `.bash_profile` or as appropriate 
 Replacing the number and username as appropriate. Your MFA ARN is on this page:\
 https://console.aws.amazon.com/iam/home?#/security_credentials
 
+I also recommend that you switch your aws profile to the `mfa` profile created by the script (not changing your profile will cause aws commands to fail):
+
+    echo 'export AWS_PROFILE=mfa' >> $HOME/.zshrc
+
 To see all the options, run the script with `-h`:
 
     aws-cli-mfa -h
