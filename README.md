@@ -11,6 +11,8 @@ Note that you MUST [`source`](https://linuxize.com/post/bash-source-command/) (o
     . aws-cli-mfa $AWS_MFA_ARN 123456
     . aws-cli-mfa $AWS_MFA_ARN 123456 -p rogusdev -d 57600
 
+Meaning, *the period at the beginning of those lines above is a critical, vital part of using this application*.
+
 #### Dependencies
 You must have `jq`, python 3 (as `python3`), and the aws cli (as `aws`) available on your PATH in your shell.
 
@@ -47,7 +49,7 @@ Installing `jq` and `wget` (in case you don't have wget to download this script 
 
 Installing `aws`: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
 
-Installing `python3` can be done in a variet of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
+Installing `python3` can be done in a variety of ways, however I recommend using `asdf`: https://github.com/danhper/asdf-python
 
 ## Building from src
 Clone the repo and create all shells' final `aws-cli-mfa-*` scripts and then copy your preference like so:
