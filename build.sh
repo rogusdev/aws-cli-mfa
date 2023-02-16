@@ -2,20 +2,16 @@
 
 AWS_CLI_MFA_SHELL=bash && \
 sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
-    sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
-    sudo chmod +x /usr/local/bin/aws-cli-mfa &&
-    cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
+    sudo tee ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL > /dev/null
 
 AWS_CLI_MFA_SHELL=zsh && \
 sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
-    sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
-    sudo chmod +x /usr/local/bin/aws-cli-mfa &&
-    cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
+    sudo tee ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL > /dev/null
 
 AWS_CLI_MFA_SHELL=ksh && \
 sed -e "/#INSERT_PYTHON_CODE_HERE/r ./src/aws_cli_mfa.py" -e "s///" ./src/$AWS_CLI_MFA_SHELL.sh |
-    sudo tee /usr/local/bin/aws-cli-mfa >/dev/null &&
-    sudo chmod +x /usr/local/bin/aws-cli-mfa &&
-    cp /usr/local/bin/aws-cli-mfa ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL
+    sudo tee ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL > /dev/null
 
-sudo rm -f /usr/local/bin/aws-cli-mfa
+AWS_CLI_MFA_SHELL=fish && \
+sed 's/"/\\\"/g' ./src/aws_cli_mfa.py | sed -e "/#INSERT_PYTHON_CODE_HERE/r /dev/stdin" -e "s///" ./src/mfa.fish |
+    sudo tee ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL > /dev/null
