@@ -13,6 +13,12 @@ Note that you MUST [`source`](https://linuxize.com/post/bash-source-command/) (o
 
 Meaning, *the period at the beginning of those lines above is a critical, vital part of using this application*.
 
+An easy way to test that everything is working is simply:
+
+    aws s3 ls
+
+Note that aws cli commands will only work in the terminal you `source`-d this script in. If you want to use `aws` in other terminals, you will need to pass `--profile mfa` at the end ala `aws s3 ls --profile mfa` or you can `export AWS_PROFILE=mfa` in the appropriate profile/rc file to make that your default aws profile (for everything!).
+
 #### Dependencies
 You must have `jq`, python 3 (as `python3`), and the aws cli (as `aws`) available on your PATH in your shell.
 
