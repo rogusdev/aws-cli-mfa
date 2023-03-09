@@ -17,6 +17,12 @@ If using Fish, you will need to use a slight workaround due to how Fish's [sourc
 
     . (which aws-cli-mfa) $AWS_MFA_ARN 123456
 
+An easy way to test that everything is working is simply:
+
+    aws s3 ls
+
+Note that aws cli commands will only work in the terminal you `source`-d this script in. If you want to use `aws` in other terminals, you will need to pass `--profile mfa` at the end ala `aws s3 ls --profile mfa` or you can `export AWS_PROFILE=mfa` in the appropriate profile/rc file to make that your default aws profile (for everything!).
+
 #### Dependencies
 You must have `jq`, python 3 (as `python3`), and the aws cli (as `aws`) available on your PATH in your shell.
 
@@ -62,14 +68,9 @@ Installing `python3` can be done in a variety of ways, however I recommend using
 ## Building from src
 Clone the repo and create all shells' final `aws-cli-mfa-*` scripts and then copy your preference like so:
 
-    AWS_CLI_MFA_SHELL=bash &&
-    ./build.sh && sudo cp ./bin/aws-cli-mfa-$AWS_CLI_MFA_SHELL /usr/local/bin/aws-cli-mfa
+    ./build.sh && sudo cp ./bin/aws-cli-mfa-SHELL /usr/local/bin/aws-cli-mfa
 
-Or if using Fish:
-
-    ./build.fish
-
-Current shell options are: `bash`, `zsh`, `ksh`, `fish`
+Where SHELL is one of the available shell options: `bash`, `zsh`, `ksh`, `fish`
 
 (For the curious, the `-e "s///"` gets rid of the `#INSERT_PYTHON_CODE_HERE`.)
 
